@@ -18,7 +18,7 @@ def init_game_environment() -> tuple[pygame.time.Clock, pygame.Surface]:
 
     return clock, screen
 
-def init_game_objects() -> tuple[pygame.sprite.Group, pygame.sprite.Group]:
+def init_object_groups() -> tuple[pygame.sprite.Group, pygame.sprite.Group, pygame.sprite.Group]:
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
@@ -26,23 +26,31 @@ def init_game_objects() -> tuple[pygame.sprite.Group, pygame.sprite.Group]:
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = updatable
     asteroidfield = AsteroidField()
-    player = Player(x = SCREEN_WIDTH/2, y = SCREEN_HEIGHT/2)
 
-    return updatable, drawable
+    return updatable, drawable, asteroids
+
+def end_game() -> None:
+    print("Game Over!")
+    pygame.event.post(pygame.event.Event(pygame.QUIT))
 
 def main() -> int:
     clock, screen = init_game_environment()
-    updatable, drawable = init_game_objects()
+    updatable, drawable, asteroids = init_object_groups()
+    player = Player(x = SCREEN_WIDTH/2, y = SCREEN_HEIGHT/2)
     delta_t_seconds = 0
 
     # Game loop
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
+                pygame.quit()
                 return 0
 
         screen.fill((0,0,0))
         updatable.update(delta_t_seconds)
+        for asteroid in asteroids:
+            if player.collides_with(asteroid):
+                end_game()
         for obj in drawable:
             obj.draw(screen)
         pygame.display.flip()
