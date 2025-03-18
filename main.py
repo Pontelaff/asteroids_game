@@ -6,6 +6,7 @@ from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from shot import Shot
 
 def init_game_environment() -> tuple[pygame.time.Clock, pygame.Surface]:
     print("Starting Asteroids!")
@@ -18,16 +19,18 @@ def init_game_environment() -> tuple[pygame.time.Clock, pygame.Surface]:
 
     return clock, screen
 
-def init_object_groups() -> tuple[pygame.sprite.Group, pygame.sprite.Group, pygame.sprite.Group]:
+def init_object_groups() -> tuple[pygame.sprite.Group, pygame.sprite.Group, pygame.sprite.Group, pygame.sprite.Group]:
     updatable = pygame.sprite.Group()
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    shots = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = updatable
+    Shot.containers = (shots, updatable, drawable)
     asteroidfield = AsteroidField()
 
-    return updatable, drawable, asteroids
+    return updatable, drawable, asteroids, shots
 
 def end_game() -> None:
     print("Game Over!")
@@ -35,7 +38,7 @@ def end_game() -> None:
 
 def main() -> int:
     clock, screen = init_game_environment()
-    updatable, drawable, asteroids = init_object_groups()
+    updatable, drawable, asteroids, shots = init_object_groups()
     player = Player(x = SCREEN_WIDTH/2, y = SCREEN_HEIGHT/2)
     delta_t_seconds = 0
 
