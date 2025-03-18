@@ -5,16 +5,21 @@ import pygame
 from constants import *
 from player import Player
 
-def main() -> int:
+def init_game() -> tuple[pygame.time.Clock, pygame.Surface, Player]:
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}\nScreen height: {SCREEN_HEIGHT}")
-    numpass, numfail = pygame.init()
+    _, numfail = pygame.init()
     if numfail != 0:
-        return -1
+        print(f"Failed to initialize {numfail} pygame modules")
     clock = pygame.time.Clock()
-    delta_t_seconds = 0
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     player = Player(x = SCREEN_WIDTH/2, y = SCREEN_HEIGHT/2)
+
+    return clock, screen, player
+
+def main() -> int:
+    clock, screen, player = init_game()
+    delta_t_seconds = 0
 
     while True:
         for event in pygame.event.get():
