@@ -26,9 +26,12 @@ def main() -> int:
             if event.type == pygame.QUIT:
                 return 0
         screen.fill((0,0,0))
+        player.update(delta_t_seconds)
         player.draw(screen)
         pygame.display.flip()
         delta_t_seconds = clock.tick(FRAMES_PER_SECOND)/1000
+
+    return -1
 
 
 if __name__ == "__main__":
