@@ -7,7 +7,7 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
-from powerup import PowerUp
+from powerup import PowerUp, PowerUpType
 from powerupspawner import PowerUpSpawner
 
 def init_game_environment() -> tuple[pygame.time.Clock, pygame.Surface]:
@@ -36,7 +36,7 @@ def init_object_groups() -> tuple[pygame.sprite.Group, pygame.sprite.Group, pyga
     asteroidfield = AsteroidField()
     powerupspawner = PowerUpSpawner()
 
-    return updatable, drawable, asteroids, shots
+    return updatable, drawable, asteroids, shots, powerups
 
 def end_game() -> None:
     print("Game Over!")
@@ -44,7 +44,7 @@ def end_game() -> None:
 
 def main() -> int:
     clock, screen = init_game_environment()
-    updatable, drawable, asteroids, shots = init_object_groups()
+    updatable, drawable, asteroids, shots, powerups = init_object_groups()
     player = Player(x = SCREEN_WIDTH/2, y = SCREEN_HEIGHT/2)
     delta_t_seconds = 0
 
@@ -57,9 +57,16 @@ def main() -> int:
 
         screen.fill((0,0,0))
         updatable.update(delta_t_seconds)
+        for powerup in powerups:
+            if player.collides_with(powerup):
+                player.collect_powerup(powerup.type)
+                powerup.kill()
         for asteroid in asteroids:
             if player.collides_with(asteroid):
-                end_game()
+                if player.powerup == PowerUpType.INVINCIBLE:
+                    asteroid.split()
+                else:
+                    end_game()
             for shot in shots:
                 if shot.collides_with(asteroid):
                     asteroid.split()

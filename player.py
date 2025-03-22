@@ -1,7 +1,9 @@
 import pygame
+import math
 from circleshape import CircleShape
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_MOVE_SPEED, PLAYER_SHOT_COOLDOWN
 from shot import Shot
+from powerup import PowerUpType
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_MOVE_SPEED, PLAYER_SHOT_COOLDOWN, POWERUP_ACTIVE_SECONDS
 
 class Player(CircleShape):
     def __init__(self, x, y):
@@ -9,6 +11,8 @@ class Player(CircleShape):
         self.rotation = 0
         self.color = (255, 255, 255)
         self.shot_cooldown = 0.0
+        self.powerup = None
+        self.powerup_time = 0.0
 
     def triangle(self) -> list[int]:
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
@@ -34,8 +38,26 @@ class Player(CircleShape):
             shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation)
             self.shot_cooldown = PLAYER_SHOT_COOLDOWN
 
+    def apply_powerup(self) -> None:
+        if self.powerup_time <= 0:
+            self.powerup = None
+            self.color = (255, 255, 255)
+            return
+
+        if self.powerup == PowerUpType.INVINCIBLE:
+            red = 200 + 50*math.sin(self.powerup_time*5)
+            green = 200 + 50*math.sin(self.powerup_time*5 + 1)
+            blue = 200 + 50*math.sin(self.powerup_time*5 + 2)
+            self.color = (red, green, blue)
+
+
     def update(self, dt: float) -> None:
         self.shot_cooldown -= dt
+        self.powerup_time -= dt
+
+        if self.powerup is not None:
+            self.apply_powerup()
+
         keys = pygame.key.get_pressed()
 
         if keys[pygame.K_a]:
@@ -53,3 +75,7 @@ class Player(CircleShape):
         if keys[pygame.K_SPACE]:
             # Shoot
             self.shoot()
+
+    def collect_powerup(self, powerup: PowerUpType) -> None:
+        self.powerup_time = POWERUP_ACTIVE_SECONDS
+        self.powerup = powerup
