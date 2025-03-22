@@ -7,6 +7,8 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
+from powerup import PowerUp
+from powerupspawner import PowerUpSpawner
 
 def init_game_environment() -> tuple[pygame.time.Clock, pygame.Surface]:
     print("Starting Asteroids!")
@@ -24,11 +26,15 @@ def init_object_groups() -> tuple[pygame.sprite.Group, pygame.sprite.Group, pyga
     drawable = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
     shots = pygame.sprite.Group()
+    powerups = pygame.sprite.Group()
     Player.containers = (updatable, drawable)
     Asteroid.containers = (asteroids, updatable, drawable)
     AsteroidField.containers = updatable
     Shot.containers = (shots, updatable, drawable)
+    PowerUp.containers = (powerups, drawable)
+    PowerUpSpawner.containers = updatable
     asteroidfield = AsteroidField()
+    powerupspawner = PowerUpSpawner()
 
     return updatable, drawable, asteroids, shots
 
