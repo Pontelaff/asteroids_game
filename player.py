@@ -37,6 +37,18 @@ class Player(CircleShape):
             shot = Shot(self.position.x, self.position.y)
             shot.velocity = pygame.Vector2(0, 1).rotate(self.rotation)
             self.shot_cooldown = PLAYER_SHOT_COOLDOWN
+            if self.powerup == PowerUpType.QUICK_SHOT:
+                self.shot_cooldown /= 3
+                shot.color = (0, 50, 255)
+            if self.powerup == PowerUpType.TRIPPLE_SHOT:
+                shot2 = Shot(self.position.x, self.position.y)
+                shot3 = Shot(self.position.x, self.position.y)
+                shot2.velocity = pygame.Vector2(0, 1).rotate(self.rotation + 20)
+                shot3.velocity = pygame.Vector2(0, 1).rotate(self.rotation - 20)
+                shot.color = (255, 0, 0)
+                shot2.color = (255, 0, 0)
+                shot3.color = (255, 0, 0)
+
 
     def apply_powerup(self) -> None:
         if self.powerup_time <= 0:
