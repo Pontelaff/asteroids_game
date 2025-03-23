@@ -9,11 +9,13 @@ from asteroidfield import AsteroidField
 from shot import Shot
 from powerup import PowerUp, PowerUpType
 from powerupspawner import PowerUpSpawner
+from scoreboard import Scoreboard
 
 def init_game_environment() -> tuple[pygame.time.Clock, pygame.Surface]:
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}\nScreen height: {SCREEN_HEIGHT}")
     _, numfail = pygame.init()
+    pygame.font.init()
     if numfail != 0:
         print(f"Failed to initialize {numfail} pygame modules")
     clock = pygame.time.Clock()
@@ -33,8 +35,7 @@ def init_object_groups() -> tuple[pygame.sprite.Group, pygame.sprite.Group, pyga
     Shot.containers = (shots, updatable, drawable)
     PowerUp.containers = (powerups, drawable)
     PowerUpSpawner.containers = updatable
-    asteroidfield = AsteroidField()
-    powerupspawner = PowerUpSpawner()
+    Scoreboard.containers = drawable
 
     return updatable, drawable, asteroids, shots, powerups
 
@@ -46,6 +47,9 @@ def main() -> int:
     clock, screen = init_game_environment()
     updatable, drawable, asteroids, shots, powerups = init_object_groups()
     player = Player(x = SCREEN_WIDTH/2, y = SCREEN_HEIGHT/2)
+    scoreboard = Scoreboard()
+    _ = AsteroidField()
+    _ = PowerUpSpawner()
     delta_t_seconds = 0
 
     # Game loop
@@ -64,11 +68,13 @@ def main() -> int:
         for asteroid in asteroids:
             if player.collides_with(asteroid):
                 if player.powerup == PowerUpType.INVINCIBLE:
+                    scoreboard.add_score(asteroid.get_size())
                     asteroid.split()
                 else:
                     end_game()
             for shot in shots:
                 if shot.collides_with(asteroid):
+                    scoreboard.add_score(asteroid.get_size())
                     asteroid.split()
                     shot.kill()
                     break
