@@ -3,7 +3,7 @@ import math
 from circleshape import CircleShape
 from shot import Shot
 from powerup import PowerUpType
-from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_MOVE_SPEED, PLAYER_SHOT_COOLDOWN, POWERUP_ACTIVE_SECONDS
+from constants import PLAYER_RADIUS, PLAYER_TURN_SPEED, PLAYER_MOVE_SPEED, PLAYER_SHOT_COOLDOWN, POWERUP_ACTIVE_SECONDS, POWERUP_COLORS
 
 class Player(CircleShape):
     def __init__(self, x, y):
@@ -49,6 +49,10 @@ class Player(CircleShape):
                 shot2.color = (255, 0, 0)
                 shot3.color = (255, 0, 0)
 
+    def get_score_multiplier(self) -> PowerUpType:
+        if self.powerup == PowerUpType.SCORE_MULTIPLIER:
+            return 3
+        return 1
 
     def apply_powerup(self) -> None:
         if self.powerup_time <= 0:
@@ -61,7 +65,10 @@ class Player(CircleShape):
             green = 200 + 50*math.sin(self.powerup_time*5 + 1)
             blue = 200 + 50*math.sin(self.powerup_time*5 + 2)
             self.color = (red, green, blue)
+            return
 
+        if self.powerup == PowerUpType.SCORE_MULTIPLIER:
+            self.color = POWERUP_COLORS["score_multiplier"]
 
     def update(self, dt: float) -> None:
         self.shot_cooldown -= dt

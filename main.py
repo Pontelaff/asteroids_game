@@ -68,13 +68,13 @@ def main() -> int:
         for asteroid in asteroids:
             if player.collides_with(asteroid):
                 if player.powerup == PowerUpType.INVINCIBLE:
-                    scoreboard.add_score(asteroid.get_size())
+                    scoreboard.add_score(asteroid.get_size(), player.get_score_multiplier())
                     asteroid.split()
                 else:
                     end_game()
             for shot in shots:
                 if shot.collides_with(asteroid):
-                    scoreboard.add_score(asteroid.get_size())
+                    scoreboard.add_score(asteroid.get_size(), player.get_score_multiplier())
                     asteroid.split()
                     shot.kill()
                     break

@@ -13,6 +13,6 @@ class Scoreboard(pygame.sprite.Sprite):
         text = f"SCORE: {self.score}"
         self.font.render_to(surf, self.position, text, fgcolor = (255, 255, 255), size = 40)
 
-    def add_score(self, score: int) -> None:
-        self.score += score
+    def add_score(self, score: int, multiplier: int) -> None:
+        self.score += score * multiplier
 
